@@ -1,58 +1,93 @@
-console.log('App.js is running')
-
-// JS - JavaScript XML
-// Only one root element, to creat side by side elements, wrap in a single element!
-
-const app = {
-  title: 'Indecision App',
-  subTitle: 'Put your life in the hands of a computer!',
-  options: [],
-};
-
-const onFormSubmit = (e) => {
-  e.preventDefault();
-
-  const option = e.target.elements.option.value;
-  
-  if(option) {
-      app.options.push(option);
-      e.target.elements.option.value = '';
+class IndecisionApp extends React.Component {
+  render() {
+    const title = 'Indecision'
+    const subtitle = 'Put your life in the hands of a computer'
+    const options = ['thing1', 'thing2', 'thing3']
+    return (
+      <div>
+        <Header title={title} subtitle={subtitle}/>
+        <Action />
+        <Options options={options}/>
+        <AddOption />
+      </div>
+    )
   }
-  renderApp();
-};
+}
 
-const onMakeDecision = () => {
-    const randomNum = Math.floor(Math.random() * app.options.length);
-    const option = app.options[randomNum];
-    alert(option)
-};
+class Header extends React.Component {
+  render(){
+    return (
+      <div>
+        <h1>{this.props.title}</h1>
+        <h2>{this.props.subtitle}</h2>
+      </div>
+    );
+  }
+}
 
-const onRemoveAll = () => {
-  app.options = [];
-  renderApp();
-};
+class Action extends React.Component {
+  handlePick() {
+    alert('handle pick')
+  }
 
-var appRoot = document.getElementById('app');
+  render() {
+    return (
+      <div>
+        <button onClick={this.handlePick}>What should I do?</button>
+      </div>
+    )
+  }
+}
 
-const renderApp = () => {
-  const template = (
-    <div>
-        <h1>{app.title}</h1>
-        {app.subTitle && <p>{app.subTitle}</p>}
-        <p>{app.options && app.options.length > 0 ? 'Here are your options: ' : 'No Options'}</p>
-        <button disabled={app.options.length === 0} onClick={onMakeDecision}>What should I do?</button>
-        <button onClick={onRemoveAll}>Remove All</button>
-        <ol>
-            {app.options.map( (option, optionNumber) => <li key={option}>{option}</li> )}
-        </ol>
-        <form onSubmit={onFormSubmit}>
-            <input type="text" name="option"/>
-            <button>Add Option</button>
+class Options extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.handleRemoveAll = this.handleRemoveAll.bind(this);
+  }
+  handleRemoveAll () {
+    console.log(this.props.options)
+    // alert('Handle Remove All')
+  }
+  render() {
+    return (
+      <div>
+        <button onClick={this.handleRemoveAll}>Remove All</button>
+        {this.props.options.map((option) => <Option key={option} optionText={option}/>)}
+      </div>
+    )
+  }
+}
+
+class Option extends React.Component {
+  render() {
+    return (
+      <div>
+        {this.props.optionText}
+      </div>
+    )
+  }
+}
+
+class AddOption extends React.Component {
+  handleAddOption (e) {
+    e.preventDefault();
+    const input = e.target.option.value.trim();
+    if(input) {
+      alert(input)
+    }
+  }
+  render() {
+    return (
+      <div>
+        AddOption Component Here
+        <form onSubmit={this.handleAddOption}>
+          <input type="text" name="option"></input>
+          <button>Add Option</button>
         </form>
-    </div>
-  );
+      </div>
+    )
+  }
+}
 
-  ReactDOM.render(template, appRoot);
-};
-
-renderApp();
+ReactDOM.render(<IndecisionApp/>, document.getElementById('app'))
